@@ -1,0 +1,19 @@
+<script>
+  {
+    let url = 'ws://' + location.host + location.pathname + '/ws';
+    let ws = new WebSocket(url);
+    ws.addEventListener('message', (msg) => {
+      if (msg.data === 'reload') {
+        location.reload();
+      } else if (msg.data === 'refreshCss') {
+        let links = document.getElementsByTagName('link');
+        let head = document.getElementsByTagName('head')[0];
+        for (let link of links) {
+          let parent = link.parentElement ?? head;
+          link.remove();
+          parent.appendChild(parent);
+        }
+      }
+    });
+  }
+</script>
