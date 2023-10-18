@@ -1,5 +1,6 @@
 {
   "name": "live",
+  "version": "0.1.0",
   "module": "index.js",
   "type": "module",
   "devDependencies": {

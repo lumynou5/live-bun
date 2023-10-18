@@ -1,4 +1,8 @@
-# live
+# Live
+
+Live is a lightweight live server made with [Bun](https://bun.sh/).
+
+## Usage
 
 To install dependencies:
 
@@ -9,7 +13,5 @@ bun install
 To run:
 
 ```bash
-bun run index.js
+bun .
 ```
-
-This project was created using `bun init` in bun v1.0.6. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
