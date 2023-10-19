@@ -46,6 +46,8 @@ const server = Bun.serve({
   },
 });
 
+console.log('Your directory is now living on http://localhost:8000. Press Q to stop the server.');
+
 process.stdin.setRawMode(true);
 process.stdin.on('data', (ch) => {
   if (ch.toString() === 'q') {
