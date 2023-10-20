@@ -1,5 +1,36 @@
 import { watch } from 'fs';
 
+let options = {};
+for (let i = 2; i < Bun.argv.length; i++) {
+  switch (Bun.argv[i]) {
+    case '--help':
+      console.write(`
+Usage: bun run . [--port PORT] [--help]
+
+Options:
+  -p, --port PORT  Specify the port to use. (Default: 8000)
+  --help           Print help text and exit.
+`);
+      process.exit();
+    case '-p':
+    case '--port':
+      if (options.port) {
+        console.error('Repeated port options.');
+        process.exit(1);
+      }
+      options.port = parseInt(Bun.argv[++i], 10);
+      if (isNaN(options.port)) {
+        console.error('Bad port option.');
+        process.exit(1);
+      }
+      break;
+    default:
+      console.error('Unrecognized argument(s).');
+      process.exit(1);
+  }
+}
+options.port ??= 8000;
+
 const injection = await Bun.file('injection.html').text();
 
 let clients = [];
@@ -14,7 +45,7 @@ watcher.on('change', (event, filename) => {
 });
 
 const server = Bun.serve({
-  port: '8000',
+  port: options.port,
   async fetch(req, server) {
     if (req.url.endsWith('ws')) {
       if (server.upgrade(req)) return;
@@ -46,7 +77,7 @@ const server = Bun.serve({
   },
 });
 
-console.log('Your directory is now living on http://localhost:8000. Press Q to stop the server.');
+console.log(`Your directory is now living on http://localhost:${options.port}. Press Q to stop the server.`);
 
 process.stdin.setRawMode(true);
 process.stdin.on('data', (ch) => {
