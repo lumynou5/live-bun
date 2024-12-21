@@ -62,8 +62,8 @@ const server = Bun.serve({
       pathname = "/index.html"
     }
 
-    let filePath = '.' + pathname;
-    let file = Bun.file(filePath);
+    const filePath = '.' + pathname;
+    const file = Bun.file(filePath);
     if (await file.exists()) {
       let content = await file.bytes();
       if (file.type.includes('text/html')) {
