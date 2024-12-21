@@ -65,10 +65,12 @@ const server = Bun.serve({
     let filePath = '.' + pathname;
     let file = Bun.file(filePath);
     if (await file.exists()) {
-      let content = await file.text();
+      let content = await file.bytes();
       if (file.type.includes('text/html')) {
-        let idx = content.search(/<\/body>/i);
-        content = ''.concat(content.slice(0, idx), injection, content.slice(idx));
+        const textDecoder = new TextDecoder();
+        let textContent = textDecoder.decode(content.buffer);
+        let idx = textContent.search(/<\/body>/i);
+        content = ''.concat(textContent.slice(0, idx), injection, textContent.slice(idx));
       }
       return new Response(content, { headers: { 'Content-Type': file.type } });
     } else {
