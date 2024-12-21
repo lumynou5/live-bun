@@ -34,7 +34,11 @@ options.port ??= 8000;
 const injection = await Bun.file('injection.html').text();
 
 let clients = [];
-let watcher = watch('.');
+let watcher = watch(
+  '.',
+  { recursive: true }
+);
+
 watcher.on('change', (event, filename) => {
   let file = Bun.file(filename.toString());
   if (file.type.includes('text/css')) {
