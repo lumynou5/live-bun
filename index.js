@@ -31,7 +31,7 @@ Options:
 }
 options.port ??= 8000;
 
-const injection = await Bun.file('injection.html').text();
+const injection = await Bun.file(`${import.meta.dir}/injection.html`).text();
 
 let clients = [];
 let watcher = watch(
