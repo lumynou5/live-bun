@@ -59,7 +59,7 @@ const server = Bun.serve({
     let pathname = new URL(req.url).pathname;
     // URLs with no set pathname will serve /index.html by default
     if (pathname === '/') {
-      pathname = "/index.html";
+      pathname = '/index.html';
     }
 
     const filePath = '.' + pathname;
