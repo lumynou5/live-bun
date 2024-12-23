@@ -9,6 +9,7 @@
   "repository": "github:lumynou5/live-bun",
   "module": "index.js",
   "type": "module",
+  "bin": "index.js",
   "devDependencies": {
     "bun-types": "latest"
   },

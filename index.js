@@ -1,3 +1,5 @@
+#!/usr/bin/env bun
+
 import { watch } from 'fs';
 
 let options = {};
