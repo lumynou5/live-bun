@@ -1,6 +1,12 @@
 {
   "name": "live",
   "version": "0.1.0",
+  "description": "A lightweight live server made with Bun.",
+  "homepage": "https://github.com/lumynou5/live",
+  "bugs": "https://github.com/lumynou5/live/issues",
+  "license": "MIT",
+  "author": "Lumynous <lumynou5.tw@gmail.com>",
+  "repository": "github:lumynou5/live",
   "module": "index.js",
   "type": "module",
   "devDependencies": {
