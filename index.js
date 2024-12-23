@@ -31,10 +31,14 @@ Options:
 }
 options.port ??= 8000;
 
-const injection = await Bun.file('injection.html').text();
+const injection = await Bun.file(`${import.meta.dir}/injection.html`).text();
 
 let clients = [];
-let watcher = watch('.');
+let watcher = watch(
+  '.',
+  { recursive: true }
+);
+
 watcher.on('change', (event, filename) => {
   let file = Bun.file(filename.toString());
   if (file.type.includes('text/css')) {
@@ -52,11 +56,19 @@ const server = Bun.serve({
       else return new Response('Failed to upgrade.', { status: 500 });
     }
 
-    let pathname = '.' + new URL(req.url).pathname;
-    let file = Bun.file(pathname);
+    let pathname = new URL(req.url).pathname;
+    // URLs with no set pathname will serve /index.html by default
+    if (pathname === '/') {
+      pathname = '/index.html';
+    }
+
+    const filePath = '.' + pathname;
+    const file = Bun.file(filePath);
     if (await file.exists()) {
-      let content = await file.text();
+      let content = await file.bytes();
       if (file.type.includes('text/html')) {
+        const textDecoder = new TextDecoder();
+        content = textDecoder.decode(content);
         let idx = content.search(/<\/body>/i);
         content = ''.concat(content.slice(0, idx), injection, content.slice(idx));
       }
@@ -74,6 +86,9 @@ const server = Bun.serve({
       clients = clients.filter((x) => x !== ws);
       console.log(`Disconnected with ${ws.remoteAddress}`);
     },
+    message(ws, message) {
+      
+    }
   },
 });
 
