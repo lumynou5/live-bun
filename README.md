@@ -1,17 +1,23 @@
-# Live
+# live-bun
 
-Live is a lightweight live server made with [Bun](https://bun.sh/).
+live-bun is a lightweight live server made with [Bun](https://bun.sh/).
+
+## Installation
+
+```sh
+bun install live-bun
+```
 
 ## Usage
 
-To install dependencies:
+Simply run the command and the server will start on 8000 port.
 
-```bash
-bun install
+```sh
+live-bun
 ```
 
-To run:
+You can also specify the port by the `--port` option (or `-p` for short.)
 
-```bash
-bun .
+```sh
+live-bun -p 1234
 ```
