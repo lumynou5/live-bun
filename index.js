@@ -1,3 +1,5 @@
+#!/usr/bin/env bun
+
 import { watch } from 'fs';
 
 let options = {};
@@ -5,7 +7,7 @@ for (let i = 2; i < Bun.argv.length; i++) {
   switch (Bun.argv[i]) {
     case '--help':
       console.write(`
-Usage: bun run . [--port PORT] [--help]
+Usage: live-bun [--port PORT] [--help]
 
 Options:
   -p, --port PORT  Specify the port to use. (Default: 8000)
