@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Fixed
+- The package is now executable.
+- The command in the help message is corrected.
+
 ## [0.1.0] - 2024-12-23
 First release!
 
