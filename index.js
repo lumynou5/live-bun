@@ -71,7 +71,7 @@ const server = Bun.serve({
       if (file.type.includes('text/html')) {
         file = await file.text();
         let idx = file.search(/<\/body>/i);
-        file = ''.concat(file.slice(0, idx), injection, file.slice(idx));
+        file = file.slice(0, idx) + injection + file.slice(idx);
       }
       return new Response(file, { headers: { 'Content-Type': fileType } });
     } else {
