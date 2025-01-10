@@ -35,7 +35,7 @@ options.port ??= 8000;
 
 const injection = await Bun.file(`${import.meta.dir}/injection.html`).text();
 
-let clients = [];
+let clients = new Set();
 let watcher = watch(
   '.',
   { recursive: true }
@@ -63,29 +63,28 @@ const server = Bun.serve({
     if (pathname === '/') {
       pathname = '/index.html';
     }
+    pathname = '.' + pathname;
 
-    const filePath = '.' + pathname;
-    const file = Bun.file(filePath);
+    let file = Bun.file(pathname);
     if (await file.exists()) {
-      let content = await file.bytes();
+      const fileType = file.type;
       if (file.type.includes('text/html')) {
-        const textDecoder = new TextDecoder();
-        content = textDecoder.decode(content);
-        let idx = content.search(/<\/body>/i);
-        content = ''.concat(content.slice(0, idx), injection, content.slice(idx));
+        file = await file.text();
+        let idx = file.search(/<\/body>/i);
+        file = file.slice(0, idx) + injection + file.slice(idx);
       }
-      return new Response(content, { headers: { 'Content-Type': file.type } });
+      return new Response(file, { headers: { 'Content-Type': fileType } });
     } else {
       return new Response('No such file or directory.', { status: 404 });
     }
   },
   websocket: {
     open(ws) {
-      clients.push(ws);
+      clients.add(ws);
       console.log(`Connected with ${ws.remoteAddress}`);
     },
     close(ws, code, reason) {
-      clients = clients.filter((x) => x !== ws);
+      clients.delete(ws);
       console.log(`Disconnected with ${ws.remoteAddress}`);
     },
     message(ws, message) {},
