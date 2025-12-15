@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+### Added
+- Added positional DIR argument.
 ### Fixed
 - The package is now executable.
 - The command in the help message is corrected.

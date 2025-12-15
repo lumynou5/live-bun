@@ -3,41 +3,66 @@
 import { watch } from 'fs';
 
 let options = {};
-for (let i = 2; i < Bun.argv.length; i++) {
-  switch (Bun.argv[i]) {
-    case '--help':
-      console.write(`
-Usage: live-bun [--port PORT] [--help]
+{
+  const HELP_MSG = `
+Usage: live-bun [--port PORT] [DIR]
+
+Watch and serve DIR lively.  Working directory is served if no DIR specified.
 
 Options:
   -p, --port PORT  Specify the port to use. (Default: 8000)
   --help           Print help text and exit.
-`);
-      process.exit();
-    case '-p':
-    case '--port':
-      if (options.port) {
-        console.error('Repeated port options.');
-        process.exit(1);
+`;
+  let terminated = false;
+  for (let i = 2; i < Bun.argv.length; i++) {
+    if (!terminated) {
+      switch (Bun.argv[i]) {
+        case '--help':
+          console.write(HELP_MSG);
+          process.exit();
+        case '-p':
+        case '--port':
+          if (options.port) {
+            console.error('Repeated port options.');
+            process.exit(1);
+          }
+          options.port = parseInt(Bun.argv[++i], 10);
+          if (isNaN(options.port)) {
+            console.error('Bad port option.');
+            process.exit(1);
+          }
+          continue;
+        case '--':
+          terminated = true;
+          continue;
+        default:
+          if (Bun.argv[i][0] === '-') {
+            console.error(`Unrecognized option: ${Bun.argv[i]}`);
+            process.exit(1);
+          }
       }
-      options.port = parseInt(Bun.argv[++i], 10);
-      if (isNaN(options.port)) {
-        console.error('Bad port option.');
-        process.exit(1);
-      }
-      break;
-    default:
-      console.error('Unrecognized argument(s).');
+    }
+    if (options.dir) {
+      console.error('Multiple DIR specified.');
       process.exit(1);
+    }
+    options.dir = Bun.argv[i];
+    if (!(await Bun.file(options.dir).stat()).isDirectory()) {
+      console.error(`Not a directory: ${options.dir}`);
+      process.exit(1);
+    }
   }
+  options = Object.assign({
+    port: 8000,
+    dir: '.',
+  }, options);
 }
-options.port ??= 8000;
 
 const injection = await Bun.file(`${import.meta.dir}/injection.html`).text();
 
 let clients = new Set();
 let watcher = watch(
-  '.',
+  options.dir,
   { recursive: true }
 );
 
@@ -63,7 +88,7 @@ const server = Bun.serve({
     if (pathname === '/') {
       pathname = '/index.html';
     }
-    pathname = '.' + pathname;
+    pathname = options.dir + pathname;
 
     let file = Bun.file(pathname);
     if (await file.exists()) {

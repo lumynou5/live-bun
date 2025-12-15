@@ -21,3 +21,9 @@ You can also specify the port by the `--port` option (or `-p` for short.)
 ```sh
 live-bun -p 1234
 ```
+
+You may also specify a base path.
+
+```sh
+live-bun src/
+```
