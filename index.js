@@ -91,16 +91,20 @@ const server = Bun.serve({
     pathname = options.dir + pathname;
 
     let file = Bun.file(pathname);
-    if (await file.exists()) {
-      const fileType = file.type;
-      if (file.type.includes('text/html')) {
-        file = await file.text();
-        let idx = file.search(/<\/body>/i);
-        file = file.slice(0, idx) + injection + file.slice(idx);
-      }
-      return new Response(file, { headers: { 'Content-Type': fileType } });
+    const fileType = file.type;
+    // Non-existent file has a type of "text/plain".
+    if (fileType.includes('text/html')) {
+      file = await file.text();
+      let idx = file.search(/<\/body>/i);
+      file = file.slice(0, idx) + injection + file.slice(idx);
+    }
+    return new Response(file, { headers: { 'Content-Type': fileType } });
+  },
+  error(err) {
+    if (err.code === 'ENOENT') {
+      return new Response('Not found', { status: 404 });
     } else {
-      return new Response('No such file or directory.', { status: 404 });
+      return new Response('Unexpected error', { status: 500 });
     }
   },
   websocket: {
